@@ -63,6 +63,13 @@
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
+- (void)animateSomething {
+    [self.UIViewClass animateWithDuration:0.0 animations:^{
+        //just for testing
+        self.activeResultString = @"DidAnimate";
+    }];
+}
+
 - (void)registerForKeyboardNotifications {
     [self.defaultNotificationCenter addObserver:self
                                        selector:@selector(keyboardWasShown:)
@@ -101,6 +108,13 @@
         _UIAlertActionClass = [UIAlertAction class];
     }
     return _UIAlertActionClass;
+}
+
+- (Class)UIViewClass {
+    if (!_UIViewClass) {
+        _UIViewClass = [UIView class];
+    }
+    return _UIViewClass;
 }
 
 @end

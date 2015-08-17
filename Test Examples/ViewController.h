@@ -13,9 +13,11 @@
 @property (strong, nonatomic) NSNotificationCenter *defaultNotificationCenter;
 @property (strong, nonatomic) Class UIAlertControllerClass;
 @property (strong, nonatomic) Class UIAlertActionClass;
+@property (strong, nonatomic) Class UIViewClass;
 @property (strong, nonatomic) NSString *activeResultString;
 
 - (void)showAlertControllerWithTitle:(NSString *)title message:(NSString *)message;
+- (void)animateSomething;
 - (void)registerForKeyboardNotifications;
 - (void)unregisterForKeyboardNotifications;
 

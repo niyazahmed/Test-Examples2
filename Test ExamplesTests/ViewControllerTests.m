@@ -37,7 +37,8 @@
 
 @property (strong, nonatomic) ViewController *sut;
 @property (strong, nonatomic) ResultsViewController *resultsViewController;
-@property (nonatomic, strong) UIAlertController *mockAlertController;
+@property (strong, nonatomic) UIAlertController *mockAlertController;
+@property (strong, nonatomic) MKTArgumentCaptor *argument;
 
 @end
 
@@ -49,7 +50,9 @@
     self.resultsViewController = [ResultsViewController new];
     self.sut.UIAlertActionClass = mockClass([UIAlertAction class]);
     self.sut.UIAlertControllerClass = mockClass([UIAlertController class]);
+    self.sut.UIViewClass = mockClass([UIView class]);
     self.mockAlertController = mock([UIAlertController class]);
+    self.argument = [MKTArgumentCaptor new];
     [given([self.sut.UIAlertControllerClass alertControllerWithTitle:anything() message:anything() preferredStyle:UIAlertControllerStyleAlert]) willReturn:self.mockAlertController];
 }
 
@@ -57,6 +60,7 @@
     self.sut = nil;
     self.resultsViewController = nil;
     self.mockAlertController = nil;
+    self.argument = nil;
     [super tearDown];
 }
 
@@ -110,6 +114,27 @@
     self.sut.UIAlertActionClass = mockUIAlertActionClass;
     
     XCTAssertEqualObjects(self.sut.UIAlertActionClass, mockUIAlertActionClass);
+}
+
+#pragma mark - Test UIView
+
+- (void)test_UIViewClass_Default_ShouldNotBeNil {
+    self.sut.UIViewClass = nil;
+    
+    XCTAssertNotNil(self.sut.UIViewClass);
+}
+
+- (void)test_UIViewClass_Default_ShouldBeKindOfClassUIView {
+    self.sut.UIViewClass = nil;
+    
+    XCTAssertEqual(self.sut.UIViewClass, [UIView class]);
+}
+
+- (void)test_UIViewClass_SetObject_ShouldReturnSetObject {
+    __strong Class mockUIViewClass = mockClass([UIView class]);
+    self.sut.UIViewClass = mockUIViewClass;
+    
+    XCTAssertEqualObjects(self.sut.UIViewClass, mockUIViewClass);
 }
 
 #pragma mark - Test DefaultNotificationCenter
@@ -244,6 +269,24 @@
     
     XCTAssertEqualObjects(self.sut.activeResultString, @"Test");
     [self swapPerformSegueMethod];
+}
+
+#pragma mark - Test AnimateSomething
+
+- (void)test_animateSomething_Default_DurationShouldBe0 {
+    [self.sut animateSomething];
+    
+    [MKTVerify(self.sut.UIViewClass) animateWithDuration:0.0 animations:anything()];
+}
+
+// shows process of capturing/running blocks (can be chained into capturing/running blocks within blocks)
+- (void)test_animateSomething_Default_ActiveResultStringShouldBeDidAnimate {
+    [self.sut animateSomething];
+    
+    [MKTVerify(self.sut.UIViewClass) animateWithDuration:0.0 animations:[self.argument capture]];
+    ((void (^)())self.argument.value)();
+    
+    XCTAssertEqualObjects(self.sut.activeResultString, @"DidAnimate");
 }
 
 
